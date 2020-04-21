@@ -1,5 +1,5 @@
 # yanchogosu_toolbox
-Compatible with tools in \n
-https://github.com/cocoanlab \n 
+Compatible with tools in \linebrake
+https://github.com/cocoanlab \linebrake
 https://github.com/canlab
 
