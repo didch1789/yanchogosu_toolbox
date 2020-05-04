@@ -26,7 +26,7 @@ switch class(filedir)
     otherwise
         disp('Unknown input!')
 end
-
+s = 1;
 template = split(target, filesep);
 
 if dochar
