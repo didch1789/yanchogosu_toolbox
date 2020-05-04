@@ -14,11 +14,13 @@ switch class(filedir)
     case 'cell'
         target = filedir;
         docell = 1;
+        dochar = 0;
     case {'string', 'char'}
         if size(filedir, 1) > 1
             disp('Rather put it in cell array!!')
         else
             target = filedir;
+            docell = 0;
             dochar = 1;
         end
     otherwise
