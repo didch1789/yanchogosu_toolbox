@@ -1,4 +1,4 @@
-function apply_derivative_boost_yc(varargin)
+ function apply_derivative_boost_yc(varargin)
 % Allows for recalculation of amplitude images from the fitted responses
 % for each trial type. Necessary for calculating group statistics when
 % using multiple basis functions
@@ -103,7 +103,7 @@ function apply_derivative_boost_yc(varargin)
     % Not used; only for image eval function
     % boost = @(b) sign(b(1)) .* sqrt(sum(b .^ 2));
 
-    mask = which('brainmask.nii');
+    mask = 'mask.nii';
     docontrasts = 0;
     doamps = 0;
     nodb = 0;
@@ -319,8 +319,8 @@ function apply_derivative_boost_yc(varargin)
             end
 
             % Test your choice by showing you a plot
-            htwfunction = @(b) htw_from_fit(SPM.xBF.bf, b, mytimeres, 'startval', startend(1), 'endval', startend(2), 'plot', 'verbose');
-            htwfunction(ones(size(SPM.xBF.bf, 2), 1))
+            htwfunction = @(b) htw_from_fit(SPM.xBF.bf, b, mytimeres, 'startval', startend(1), 'endval', startend(2));
+            htwfunction(ones(size(SPM.xBF.bf, 2), 1));
             % drawnow
 
             % Create without plot option for loop through brain.
@@ -328,7 +328,7 @@ function apply_derivative_boost_yc(varargin)
 
             disp('Check the screen for a plot of your choice of window.')
             disp(' ')
-
+                
 
             % ---------------------------------------------
             % CALCULATE
@@ -343,7 +343,7 @@ function apply_derivative_boost_yc(varargin)
                 disp(imgs_cond)
                 
                 temps = split(out_name, '_');
-                nameof = temps{1};
+                nameof = extractBefore(temps{2}, '.');
                 output_name{1} = sprintf('htw_amplitude_%s.img', nameof);
                 output_name{2} = sprintf('htw_time_to_peak_%s.img', nameof);
                 output_name{3} = sprintf('htw_width_%s.img', nameof);
