@@ -1,3 +1,6 @@
 function toprojects
-cd('/media/das/cocoanlab Dropbox/projects')
+if ismac
+    cd('/Users/jungwookim/Dropbox');
+elseif isunix
+    cd('/media/das/cocoanlab Dropbox/projects');
 end
