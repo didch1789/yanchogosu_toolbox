@@ -1,7 +1,7 @@
 function out = fmri_gen_pseudodat_ycgosu(numtr, numregs)
 % pseudo random fmri_data with AR(1) random noise
 
-out = randn(numtr, numregs);
+out = zeros(numtr, numregs);
 
 for i = 1:numregs
     x = randi([0, 100], 1, 2);
