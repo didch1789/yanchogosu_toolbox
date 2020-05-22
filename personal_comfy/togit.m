@@ -1,3 +1,6 @@
 function togit
-cd('/home/jungwoo/github/')
+if ~ismac
+    cd('/home/jungwoo/github/')
+elseif ismac
+    cd('/Users/jungwookim/Dropbox/github')
 end

@@ -1,4 +1,9 @@
 function out = region_insert_ycgosu(in, vals, wh_type)
+% in: empty reigon obj
+% vals: values to be inserted
+% wh_type: 'Z', 'dat', 'val', or 'all'
+%
+% out: region obj with inserted values
 
 if nargin < 3
     error('input should be region obj, vals[numel(region) X 1], type')
