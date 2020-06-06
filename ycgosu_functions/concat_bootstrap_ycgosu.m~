@@ -1,0 +1,25 @@
+function bootout = concat_bootstrap_ycgosu(datdirs, outputdir)
+% :::Input:::
+%   -datdirs: file directory of boots files (ex.{n X 1 filenames})
+%   -outputdir file directory of output filename.
+% :::Output:::
+%   -bootout: WTS that contains conctatenated boot info.
+
+for i = 1:numel(datdirs)
+    A = load(datdirs{i});
+    fieldA = fieldnames(A);
+    if numel(fieldA) > 1
+        error('your file sh
+    end
+end
+
+
+bootout = 
+   
+
+
+
+
+
+
+end
