@@ -1,6 +1,6 @@
 function statimg = make_statimg_ycgosu(fmriobj, WTS)
 % Inputs:
-%       fmriobj: stats of fmri_data.predict
+%       fmriobj: stats.weight_obj of fmri_data.predict
 %       WTS: struct that contains wste, wmean, wZ, wP
 % Output:
 %       statimg = statimg without contrast
@@ -10,7 +10,6 @@ M.p = WTS.wP';
 M.ste = WTS.wste';
 M.dat = fmriobj.dat;
 M.volInfo = fmriobj.volInfo;
-
 
 statimg = M;
 
