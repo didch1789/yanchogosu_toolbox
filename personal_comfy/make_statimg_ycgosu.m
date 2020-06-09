@@ -15,5 +15,3 @@ M.volInfo = fmriobj.volInfo;
 statimg = M;
 
 end
-
-/media/das/cocoanlab Dropbox/projects/Monkey_fMRI/sync/results/make_statimg_ycgosu.m
