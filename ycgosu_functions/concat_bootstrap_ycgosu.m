@@ -15,12 +15,12 @@ for i = 1:numel(datdirs)
         break
     end
     w = [w;A.(fieldA{:}).w];
+    fprintf('DONE COMPILING WITH FILE %d !!!!\n', i)
 end
 
 WTS = struct;
-
-WTS.wste = squeeze(nanstd(w)); 
-WTS.wmean = squeeze(nanmean(w)); 
+WTS.wste = std(w); 
+WTS.wmean = mean(w); 
 WTS.wste(WTS.wste == 0) = Inf;  
 WTS.wZ = WTS.wmean ./ WTS.wste;
 WTS.wP = 2 * (1 - normcdf(abs(WTS.wZ)));
