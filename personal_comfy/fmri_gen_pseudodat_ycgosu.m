@@ -9,8 +9,6 @@ for i = 1:numel(varargin)
     end
 end            
 
-out = randn(numtr, numregs);
-
 for i = 1:numregs
     x = randi([0, 100], 1, 2);
     y = randi([-4 4], 1, 1);
