@@ -12,6 +12,4 @@ for i = 1:numel(A)
         delete(A{i});
     end
 end
-    
-
-'/media/das/7T/data/PPD_200619_Hahnz/NII/RUN1/gunzip_ycgosu.m'
+   
