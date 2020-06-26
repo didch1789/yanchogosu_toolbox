@@ -1,7 +1,7 @@
 function concat_bootstrap_ycgosu(datdirs, outputdir)
 % :::Input:::
 %   -datdirs: file directory of boots files (ex.{n X 1 filenames})
-%   -outputdir file directory of output filename.
+%   -outputdir file directory of output filename (should include filenames).
 % :::Output:::
 %   -bootout: WTS that contains conctatenated boot info.
 

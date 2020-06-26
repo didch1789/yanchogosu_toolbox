@@ -1,4 +1,4 @@
-function replace_copy_ycgosu(out, in)
+function repcp(out, in)
     % out: string you want to change. you can also enter 'digit' for
     % numbers, 'wspace' for blanks, 'lower' for lower case letter, 'upper'
     % for upper case letter
