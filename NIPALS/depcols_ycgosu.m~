@@ -1,7 +1,7 @@
 function idx = depcols_ycgosu(X, varargin)
 % varagin:
-%    tol: tolerance default tol is 1E-5
-tol = 1E-5;
+%    tol: tolerance
+tol = 
 
 for i = 1:numel(varargin)
     switch varargin{i}
