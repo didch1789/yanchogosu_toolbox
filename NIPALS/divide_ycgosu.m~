@@ -13,17 +13,28 @@ end
 
 divided = cell(numbatch, 1);
 
-k = 1;
 for i = 1:numel(divided)
     singlebatch = floor(total_length / numbatch);
-    divided{i} = (k:singlebatch*i);
+    dividi
     
-    if i == numel(divided)
-        divided{i} = k:total_length;
-    end
-    
-    k = k + singlebatch;
 end
 
+k = 1;
+l = 1;
+
+
+for i = 1:total_length
+    
+    if mod(i, interval) == 0
+        divided{l} = [k:i];
+        l = l + 1;
+        k = k + interval;
+    end
+    
+    if mod(total_length, interval) ~= 0
+        divided{l} = [k:k+mod(total_length, interval) - 1];
+    end
+    
+end
 
 end

@@ -1,4 +1,5 @@
 function togit
+
 if ~ismac
     cd('/home/jungwoo/github/')
 elseif ismac
