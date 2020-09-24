@@ -27,10 +27,10 @@ function out = switch_ycgosu(A, idx1, idx2)
 %           0 0 0];
 %   out = switch_ycgosu(A, logical(idx1), logical(idx2))
 %   out = [     3     2     2
-%      4     4     4
-%      5     2     3
-%      1     3     4
-%      1     2     5;
+%               4     4     4
+%               5     2     3
+%               1     3     4
+%               1     2     5;
 
 if ~isequal(size(A), size(idx1), size(idx2))
     error('Wrong input size!')
