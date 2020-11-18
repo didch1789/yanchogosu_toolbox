@@ -12,7 +12,7 @@ end
 for i = 1:numregs
     x = randi([0, 100], 1, 2);
     y = randi([-4 4], 1, 1);
-    z = randi([-5 5], 1, 1);
+    z = randi([1 5], 1, 1);
     
     if strcmp(noisetype, 'ar')
         Mdl = arima('Constant', 0, 'AR', {0.5}, 'Variance', z);
