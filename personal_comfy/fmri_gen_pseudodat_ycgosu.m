@@ -11,13 +11,8 @@ for i = 1:numel(varargin)
 end            
 
 for i = 1:numregs
-<<<<<<< HEAD
     x = randi([1, 100], 1, 2);
     y = randi([1 3], 1, 1);
-=======
-    x = randi([0, 100], 1, 2);
-    y = randi([-4 4], 1, 1);
->>>>>>> 25777b787daddb8c1bf95c0fd62929457194358e
     z = randi([1 5], 1, 1);
     
     if strcmp(noisetype, 'ar')
