@@ -1,4 +1,5 @@
 function out = fmri_gen_pseudodat_ycgosu(numtr, numregs, varargin)
+% 
 % pseudo random fmri_data with AR(1) random noise
 
 out = zeros(numtr, numregs);
@@ -10,8 +11,8 @@ for i = 1:numel(varargin)
 end            
 
 for i = 1:numregs
-    x = randi([0, 100], 1, 2);
-    y = randi([-4 4], 1, 1);
+    x = randi([1, 100], 1, 2);
+    y = randi([1 3], 1, 1);
     z = randi([1 5], 1, 1);
     
     if strcmp(noisetype, 'ar')
