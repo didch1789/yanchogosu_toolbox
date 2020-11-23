@@ -5,13 +5,12 @@ function funclocal(inputdir,outdir, varargin)
 %   FSL
 %
 % inputs:
-%   -inputdir: RAW nifti file.
+%   -inputdir: RAW dicm2nii-ed file.
 %   -outdir: '/wanted/outcome/file/path'
 %   -disdaq_num: number of imgs for disdaq (integer)
 %   -TR: repetition time
 %   -doMC: do motion correction(output filename contains ~moco. no following varargin) 
 %   -duration: duration in seconds
-%   -trial_dat: 
 %   -nodisplay: Don't use fsleyes for final result.
 %       Display will show your beta map with the range within 95~99.9
 %       percent.
