@@ -1,20 +1,20 @@
-function funclocal(inputdir,outdir, varargin)
+function funclocal(niifile,outdir, varargin)
 % Prerequisites:
 %   CanlabCore: 
 %   yangchogosu_toolbox: https://github.com/didch1789/yanchogosu_toolbox.git
 %   FSL
 %
 % inputs:
-%   -inputdir: RAW nifti file.
-%   -outdir: '/wanted/outcome/file/path'
-%   -disdaq_num: number of imgs for disdaq (integer)
-%   -TR: repetition time
-%   -doMC: do motion correction(output filename contains ~moco. no following varargin) 
-%   -duration: duration in seconds
-%   -trial_dat: 
-%   -nodisplay: Don't use fsleyes for final result.
-%       Display will show your beta map with the range within 95~99.9
-%       percent.
+%       -inputdir: RAW nifti file.
+%       -outdir: '/wanted/outcome/file/path'
+%   varargins
+%       -disdaq_num: number of imgs for disdaq (integer)
+%       -TR: repetition time
+%       -doMC: do motion correction(output filename contains ~moco. no following varargin) 
+%       -duration: duration in seconds
+%       -trial_dat: 
+%       -nodisplay: Don't use fsleyes for final result.
+%                   Display will show your beta map with the range within 95~99.9 percent.
 %
 % Primarily run in condition of DISDAQ and MCF (2020.07.16)
 % e.g)
@@ -47,38 +47,26 @@ for i = 1:numel(varargin)
     end
 end
 
-inputs = inputdir;
+% 1.Disdaq
+niifile = strrep(niifile, ' ' , '_');
+[~, Fname, ext] = fileparts(niifile);
+cmd1 = 'export FSLOUTPUTTYPE=NIFTI';
 
-% 1.dicm2nii
-for i = 1:numel(inputs)
-    FolderName = 'DICM2NII_FUNCLOC';
-    fprintf('dicm2nii-ing of directory: %s \n', FolderName)
-    dicm2nii(inputs{i}, fullfile(outdir, FolderName), 'nii');
-end
-
-% 2.Disdaq
-runs = sort_ycgosu([outdir, filesep, FolderName, filesep, '*nii']);
-runs = strrep(runs, 'cocoanlab Dropbox', 'cocoanlab_Dropbox');
 if exist('disdaq_num', 'var')
     disp('DO DISDAQ!')
-    for i = 1:numel(runs)
-        V = spm_vol(runs{i});
-        wholetr = numel(V);
-        cmd1 = 'export FSLOUTPUTTYPE=NIFTI';
-        [Dname, Fname, ext] = fileparts(runs{i});
-        cmd2 = ['fslroi ', runs{i}, blanks(1), [Dname,filesep,Fname, '_disdaq', ext], ...
-             blanks(1), [num2str(disdaq_num), blanks(1), num2str(wholetr - disdaq_num)]];
-        system([cmd1, ';', cmd2]);
-    end
+    wholetr = numel(spm_vol(niifile));
+    cmd2 = sprintf('fslroi %s %s %d %d', niifile, fullfile(outdir, [Fname, '_disdaq', ext]), ...
+       disdaq_num , wholetr - disdaq_num);
+    system([cmd1 ';' cmd2])
 else
     disp('NO DISDAQ!')
 end
 
-% 3. BET on run1 disdaq
+% 2. BET on run1 disdaq
 disp('BET on run1 disdaq!!!')
-runs = sort_ycgosu([outdir, filesep, FolderName, filesep, '*_disdaq.nii']);
-runs = strrep(runs, ' ', '_');
-cmd2 = ['bet', blanks(1), runs{1}, blanks(1), fullfile(outdir, 'bet_run1_disdaq.nii')];
+disdaqimg = sort_ycgosu(fullfile(outdir, '*disdaq*'));
+disdaqimg = strrep(disdaqimg, ' ', '_');
+cmd2 = sprintf('bet %s %s', disdaqimg{1}, fullfile(outdir, 'bet_with_disdaq.nii'));
 system([cmd1,';',cmd2]);
 
 % 4. FSL merge
@@ -96,8 +84,8 @@ system([cmd1,';',cmd2]);
 
 % 5. Motion correction!
 if doMC
-    disp('Motion correction-ing in concatenated disdaq imgs. 1st img is the reference volume!!!')
-    cmd2 = ['mcflirt -in ', fullfile(outdir, FolderName, '*disdaq.nii'), ...
+    disp('Motion correction-ing in disdaq imgs. 1st img is the reference volume!!!')
+    cmd2 = ['mcflirt -in ', disdaqimg{1}, ...
         ' -o ',  fullfile(outdir, 'run_disdaq_moco.nii'),' -refvol 0 -plots'];
     system([cmd1, ';' cmd2]);
 else
@@ -130,8 +118,9 @@ end
 Dm = Dm(:);
 
 cd(outdir)
-A = fmri_data('run_disdaq_moco.nii', 'bet_run1_disdaq.nii');
-A.X = [Dm, zscore(1:size(Dm, 1))']; % add linear detrend but didn't make a big difference!
+A = fmri_data('run_disdaq_moco.nii', 'bet_with_disdaq.nii');
+mvmt = importdata('run_disdaq_moco.nii.par');
+A.X = [Dm, mvmt, zscore(1:size(Dm, 1))']; % add linear detrend but didn't make a big difference!
 out = regress(A, 'nodisplay');
 
 betamap = out.b;
@@ -144,14 +133,13 @@ betamap.fullpath = fullfile(outdir, 'betamap.nii');
 betamap.write;
 
 disp('DONE!!!')
-a1 = prctile(abs(betamap.dat), 95);
+a1 = prctile(abs(betamap.dat), 99);
 a2 = prctile(abs(betamap.dat), 99.9);
 fprintf('Values are around %f ~ %f\n', a1, a2)
 
 if displayFSL
-    system(sprintf("fsleyes bet_run1_disdaq.nii betamap.nii -dr %.2f %.2f -cm hot&", a1, a2))
+    system(sprintf("fsleyes bet_with_disdaq.nii betamap.nii -dr %.2f %.2f -cm hot&", a1, a2))
 end
-
 
 end
 
