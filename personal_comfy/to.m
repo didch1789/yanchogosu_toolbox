@@ -11,7 +11,7 @@ switch varargin{1}
         if IsLinux
             cd('/home/jungwoo/Dropbox')
         elseif ismac
-            cd('/home/jungwookim/Dropbox')
+            cd('/Users/jungwookim/Dropbox')
         end
     case 'git'
         if IsLinux
