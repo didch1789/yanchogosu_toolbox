@@ -7,7 +7,7 @@ switch varargin{1}
         elseif IsLinux
             cd('/media/das/cocoanlab_Dropbox/projects');
         end
-    case 'Dropbox'
+    case 'dropbox'
         if IsLinux
             cd('/home/jungwoo/Dropbox')
         elseif ismac
@@ -17,8 +17,14 @@ switch varargin{1}
         if IsLinux
             cd('/home/jungwoo/github/')
         elseif ismac
-            cd('/Users/jungwookim/Dropbox/github')
+            cd('/Users/jungwookim/Dropbox/github') 
         end
+    case 'data'
+        if IsLinux
+            cd('/media/das/cocoanlab_Dropbox/data')
+        end
+    otherwise
+        error('No match with your input!')
 end
 
 end
