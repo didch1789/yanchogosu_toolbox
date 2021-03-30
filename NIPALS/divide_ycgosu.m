@@ -21,7 +21,7 @@ for i = 1:numel(divided)
         R = R - 1;
         k = k + 1;
     else
-        divided{i} = (divided{i-1}(end)+1:divided{i-1}(end)+Q);
+        divided{i} = (Q*i-(Q-1):Q*i);
     end
 end
 

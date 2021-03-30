@@ -1,4 +1,4 @@
-function out = ActResttime(wholeTRs, actonsets, varargin)
+function [out desiign] = ActResttime(wholeTRs, actonsets, varargin)
 % % INPUTS % 
 %
 % wholeTRs  : number of intTR (e.g. 240)
@@ -21,7 +21,7 @@ function out = ActResttime(wholeTRs, actonsets, varargin)
 whatchar = ':';
 
 for v = 1:numel(varargin)
-    if varargin{v} == 'char'
+    if isa(varargin{v}, 'char')
         switch varargin{v}
             case 'TR'
                 TR = varargin{v+1};
@@ -40,20 +40,40 @@ HRFfunc = onsets2fmridesign(OnsDurinput, TR, TR*wholeTRs, spm_hrf(TR));
 
 [~, peakidx] = findpeaks(HRFfunc(:, 1));
 
+desiign = HRFfunc(:, 1);
+
 actTR = '';
-restTR = '1';
+if whatchar == '-'
+    restTR = '0';
+else
+    restTR = '1';
+end
 
 for i = 1:numel(peakidx) 
     st = peakidx(i)-windows(1);
     ed = peakidx(i)+windows(2);
+    if whatchar == '-'
+        st = st-1;
+        ed = ed-1;
+    end
     restTR = [restTR, whatchar ,num2str(st-1), ','];
     actTR = [actTR, num2str(st), whatchar, num2str(ed), ','];
     restTR = [restTR, num2str(ed+1)];
     if i == numel(peakidx) 
         actTR(end) = [];
-        restTR = [restTR, whatchar, num2str(wholeTRs)];
+        if whatchar == '-'
+            restTR = [restTR, whatchar, num2str(wholeTRs-1)];
+        else
+            restTR = [restTR, whatchar, num2str(wholeTRs)];
+        end
     end
 end
+
+
+
+out.actTR = actTR;
+out.restTR = restTR;
+
 
 
 

@@ -240,7 +240,7 @@
                         spm_imcalc_ui(imgs_cond, out_name, 'sign(i1) .* sqrt(i1.^2 + i2.^2)');
                     case 'timedispersion'
                         if doweights
-                            X = SPM.xX.X(:, condition_numbers);
+                            X = SPM.xX.xKXs.X(:, condition_numbers);
                             weights = diag(X'*X);
                         else
                             weights = diag(eye(3));

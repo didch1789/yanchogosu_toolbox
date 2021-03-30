@@ -12,7 +12,7 @@ function orthviews_multiple_objs_rhesus(imgs)
     n=length(imgs);
 
     % overlay = which('keuken_2014_enhanced_for_underlay.img');
-    overlay = which('NMT_SS.nii');
+    overlay = which('D99_template.nii');
 
     spm_check_registration(repmat(overlay, n, 1));
 
