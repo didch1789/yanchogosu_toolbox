@@ -3,6 +3,9 @@ function gunzip_ycgosu(deleteornot)
 % input:
 %   should be logical(1 or 0) and it removes .gz file if logical is
 %   true.
+if isempty(deleteornot)
+    deleteornot = false;
+end
 
 A = sort_ycgosu(fullfile(pwd,  '*gz'));
 
