@@ -104,7 +104,7 @@ for fold = 1:max(nfolds)
     yhat = [ones(size(xtest,1), 1) xtest] * beta;
     err = ytest - yhat;
 
-    yfit_temp( , :) = yhat;
+    yfit_temp(testidx, :) = yhat;
     mse_temp(testidx, :) = err;
 
 end
