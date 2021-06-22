@@ -1,4 +1,4 @@
-function [out desiign] = ActResttime(wholeTRs, actonsets, varargin)
+function [out desiign] = ActResttime(wholeTRs, onsdurs, varargin)
 % % INPUTS % 
 %
 % wholeTRs  : number of intTR (e.g. 240)
@@ -19,24 +19,26 @@ function [out desiign] = ActResttime(wholeTRs, actonsets, varargin)
 % out.restTR : string of TR of rest. (whole TR - act)
 
 whatchar = ':';
-
+drawfigure = false;
 for v = 1:numel(varargin)
     if isa(varargin{v}, 'char')
         switch varargin{v}
             case 'TR'
                 TR = varargin{v+1};
-            case  'duration'
-                durs = varargin{v+1};            
             case  'windows'
                 windows = varargin{v+1};            
             case 'joints'
                 whatchar = varargin{v+1};          
+            case 'drawnow'
+                drawfigure = true;
         end
     end
 end
 
-OnsDurinput = [actonsets repmat(durs, size(actonsets, 1), 1)];
-HRFfunc = onsets2fmridesign(OnsDurinput, TR, TR*wholeTRs, spm_hrf(TR));
+if size(onsdurs, 2) == 2
+else, onsdurs = onsdurs'; end
+
+HRFfunc = onsets2fmridesign(onsdurs, TR, TR*wholeTRs, spm_hrf(1));
 
 [~, peakidx] = findpeaks(HRFfunc(:, 1));
 
@@ -70,9 +72,22 @@ for i = 1:numel(peakidx)
 end
 
 
-
 out.actTR = actTR;
 out.restTR = restTR;
+
+if drawfigure
+    close all;
+    plot(HRFfunc(:, 1));
+    hold on;
+    for ww = 1:numel(peakidx)
+        x = [peakidx(ww)-windows(1) peakidx(ww)+windows(2) peakidx(ww)+windows(2) peakidx(ww)-windows(1)]; 
+        y = [min(HRFfunc(:, 1)) min(HRFfunc(:, 1)) max(HRFfunc(:, 1))  max(HRFfunc(:, 1))];
+        p = patch(x, y,'red');
+        p.FaceAlpha = 0.5;
+    end 
+    drawnow;
+    hold off
+end
 
 
 
