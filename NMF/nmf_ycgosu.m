@@ -1,1 +1,0 @@
-function nmf_ycgosu(origM, numfeats)
