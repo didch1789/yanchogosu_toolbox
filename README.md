@@ -10,5 +10,5 @@ https://github.com/cocoanlab
 https://github.com/canlab 
 
 
-and personal usages for MALTLAB.
+and personal usages for MATLAB.
 
