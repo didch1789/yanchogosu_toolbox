@@ -15,7 +15,7 @@ switch varargin{1}
         end
     case 'git'
         if ~ismac 
-            cd('/home/jungwoo/github/')
+            cd('/home/jungwoo/Dropbox/github/')
         elseif ismac
             cd('/Users/jungwookim/Dropbox/github') 
         end

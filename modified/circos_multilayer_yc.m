@@ -352,9 +352,9 @@ for i = 1:N_node
         text_rotate = rad2deg(mean(range_theta{i}));
         
         if contains(region_names{i}, temps)
-            textsize = 21;
+            textsize = 14;
         else
-            textsize = 16;
+            textsize = 13;
         end
 %         
         if text_rotate < -90 || text_rotate > 90

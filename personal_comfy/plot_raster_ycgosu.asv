@@ -1,0 +1,42 @@
+function plot_raster_ycgosu(spikedat, varargin)
+% Inputs
+%   spikedat: trial x timeseries of spike data of a single neuron (in ms)
+%   varargin
+%       'RasterColor' : rgb value. default color is black. (e.g. 'Color', [.5 .5 .5])
+%       'Line'  : line index for indicating starting point. (e.g. 'Line',240)
+%       'LineColor' : Color of the line. Also in RGB value. default color is red. (e.g. 'LineColor', [.5 .5 .5])
+
+doline = false;
+rastercolor = 'black';
+linecolor = 'red';
+
+for args = 1:numel(varargin)
+    if isa(varargin{args}, 'char') || isa(varargin{args}, 'string')
+        switch varargin{args}
+            case 'RasterColor'
+                
+        
+    end
+end
+
+
+%% Raster
+spikes = spikedat;
+trials = size(spikes, 1);
+samplenum = size(spikes, 2);
+
+for i = 1:trials
+    spks = find(spikes(i, :));
+    xspks = repmat(spks, 2, 1);
+    yspks = nan(size(xspks));
+    
+    yspks(1, :) = i - 1;
+    yspks(2, :) = i;
+    
+    plot(xspks, yspks, 'Color', 'k');hold on
+end
+hold off;
+set(gca, 'XLim', [0, samplenum], 'Ylim', [0, trials], 'TickDir', 'out', 'TickLength', [.005 .005])
+
+
+%% Raster
