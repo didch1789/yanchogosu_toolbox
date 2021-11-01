@@ -3,7 +3,7 @@ function f = plot_raster_ycgosu(spikedat, varargin)
 %   spikedat: trial x timeseries of spike data of a single neuron (in ms)
 %   varargin
 %       'RasterColor' : rgb value. default color is black. (e.g. 'Color', [.5 .5 .5])
-%       'Line'  : line index for indicating starting point. (e.g. 'Line',240)
+%       'AddLine'  : line index for indicating starting point. (e.g. 'Line',240)
 %       'LineColor' : Color of the line. Also in RGB value. default color is red. (e.g. 'LineColor', [.5 .5 .5])
 % OUTPUTS
 %   f: figure handle
@@ -17,7 +17,7 @@ for args = 1:numel(varargin)
         switch varargin{args}
             case 'RasterColor'
                 rastercolor = varargin{args+1};
-            case 'Line'
+            case 'AddLine'
                 doline = true;
                 lineidx = varargin{args+1};
             case 'LineColor'

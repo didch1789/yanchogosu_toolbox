@@ -4,6 +4,10 @@ function repcp(out, in)
     % for upper case letter
     %
     % in: string you want to replace
+    if isempty(in)
+        spaceidx = isspace(out);
+        paste_text = out(~spaceidx);
+    end
     
     copy_text = char(clipboard('paste'));
     if contains(out, {'digit', 'wspace', 'lower', 'upper'})

@@ -2,6 +2,10 @@ function out = fmri_gen_pseudodat_ycgosu(numtr, numregs, varargin)
 % 
 % pseudo random fmri_data with AR(1) random noise
 
+if nargin < 3
+    noisetype = 'gaussian';
+end
+
 out = zeros(numtr, numregs);
 for i = 1:numel(varargin)
     switch varargin{i}
