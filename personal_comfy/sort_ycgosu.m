@@ -1,14 +1,11 @@
 function [fulldir, folder, file] = sort_ycgosu(filedir, varargin)
-
 % sort files according to length of folder or file in input 'filedir'
 % varargin(sorting criteria):
 %   'folder' = sort according to folder length 
 %   'file' = sort according to file length
 %   'char' = out put gives a char array
 % default does file sort
-
 % output gives full directory of files, folder of files, or only files
-
 % inspired by os.path.walk in python - !
 
 listing = dir(filedir);
