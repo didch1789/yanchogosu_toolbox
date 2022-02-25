@@ -9,7 +9,7 @@ switch varargin{1}
         end
     case 'dropbox'
         if ~ismac
-            cd('/home/jungwoo/Dropbox')
+            cd('/home/jungwoo/das/Dropbox')
         elseif ismac
             cd('/Users/jungwookim/Dropbox')
         end
@@ -17,7 +17,7 @@ switch varargin{1}
         if ~ismac 
             cd('/home/jungwoo/Dropbox/github/')
         elseif ismac
-            cd('/Users/jungwookim/Dropbox/github') 
+            cd('/Users/jungwookim/das/Dropbox/github') 
         end
     case 'data'
         if ~ismac
