@@ -57,7 +57,7 @@ end
 y_error = y - yfit;
 
 if do_adjusted
-    orir_squared = 1 - (((y - yfit)' * (y - yfit)) / ((y-mean(y))' * y-mean(y)));
+    orir_squared = 1 - (((y - yfit)' * (y - yfit)) / ((y-mean(y))' * (y-mean(y))));
     r_squared = 1 - ((1 - orir_squared) * (N - 1) / (N - p - 1));
 else
     r_squared = 1 - (((y - yfit)' * (y - yfit)) / ((y-mean(y))' * y-mean(y)));

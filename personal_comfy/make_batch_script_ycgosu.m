@@ -1,4 +1,4 @@
-function make_batch_script_ycgosu(funcdir, funcname, logdir, numbatch)
+function make_batch_script_ycgosu(funcdir, funcname, logdir, batchidx)
 % funcdir: should be in ''' ''''. 
 %   e.g) '''/your/path/'''
 % funcname: function name without .m in 'funcname'
@@ -12,7 +12,7 @@ end
 
 clearvars s
 s = '';
-for i=1:numbatch
+for i=batchidx
  x = ['nohup matlab -singleCompThread -batch "cd(', funcdir, ');', funcname, '(', num2str(i),  ')"'];
  y = [' -logfile ', fullfile(logdir, sprintf('log%02d.txt', i)), '&', ' '];
  s = [s, x, y];
