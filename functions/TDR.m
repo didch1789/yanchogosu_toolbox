@@ -16,8 +16,8 @@ function out = TDR(Xin, Yin, varargin)
 %                    0 0];
 %                It is regarded as 6 trials with 3 conditions and 2 task
 %                variables.
-%   Yin: neural firing rates. (0s and 1s.)
-%        Size of #time X #trial or #time X #trial X #neuron
+%   Yin: neural firing rates of trials.
+%        Size of #time X #trial X #neuron
 %   varargin:
 %       ('norm_y', boolean) : zscoring of each neuron. (defaults: true)
 %                  (mean and std are computed after combining
@@ -41,7 +41,7 @@ function out = TDR(Xin, Yin, varargin)
 %   #time can differ in "Ouput" variable from "Input" variable
 %   depending on "binsize".
 %   
-%  (example)
+%  (Example)
 %  rng('default')
 %  egXin = randi([0 1], 17, 2);
 %  egYin = randn(100, 17, 20); 
