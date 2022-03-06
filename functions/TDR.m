@@ -1,13 +1,13 @@
 function out = TDR(Xin, Yin, varargin)
 % Input:
 %   Xin: regressors encoding task variables(t.v.). 
-%        Size of #t.v. X #trial
+%        Size of #trial X #t.v.
 %        (e.g., 1 task variable (e.g., amount of reward) can be encoded as
 %         series of ones and minus ones. 1 for high reward and -1 for low reward.)
 %        NOTES1. scale of each task variable should be (ideally) same, to avoid
 %        variable specific over(or under)estimation of regression coefficient.
 %        NOTES2. This matrix also determines number of condition.
-%                If transpose of the matrix has the following values,
+%                If the matrix has the following values,
 %                   [1 0;
 %                    0 1;
 %                    0 0;
@@ -39,8 +39,19 @@ function out = TDR(Xin, Yin, varargin)
 %   out.p_vc: #time X #conds X #t.v.  
 %             (average population rates projected. 
 %   #time can differ in "Ouput" variable from "Input" variable
-%   if "binsize" has specified.
+%   depending on "binsize".
 %   
+%  (example)
+%  rng('default')
+%  egXin = randi([0 1], 17, 2);
+%  egYin = randn(100, 17, 20); 
+%  out = TDR(egXin, egYin, 'binsize', 10, 'smoothsize', 20, 'numcomp', 5);
+%  out = 
+%     regression_weights: [20×2×10 double]
+%            beta_v_orth: [20×2 double]
+%                   p_vc: [10×4×2 double]
+%
+%
 %   2022.03.06. Jungwoo.
 
 norm_y = true;
@@ -51,18 +62,18 @@ smthwindow = 30;
 for i = 1:numel(varargin)
     if ischar(varargin{i})
         switch varargin{i}
-            case 'norm_y' | 'normy'
+            case {'norm_y', 'normy'}
                 % zscoring neural firing rates.
                 norm_y = varargin{i+1};
-            case 'intcpt'
+            case {'intcpt'}
                 add_intcpt = varargin{i+1};
-            case 'interact'
+            case {'interact'}
                 add_interact = varargin{i+1};
-            case 'binsize'
+            case {'binsize'}
                 binsize = varargin{i+1};
-            case 'smoothsize'
+            case {'smoothsize'}
                 smthwindow = varargin{i+1};
-            case 'numcomp'
+            case {'numcomp'}
                 numcomp = varargin{i+1};
         end
    end
@@ -108,7 +119,8 @@ X = Xin;
 glmweights = NaN(n_neuron, n_tv, size(Y, 1)); % prealloc. 
 for ni = 1:n_neuron
     trXti = Y(:, :, ni)';
-    glmweights(ni, :, :) = pinv(X) * trXti;
+    glmweight = pinv(X) * trXti;
+    glmweights(ni, :, :) = glmweight(1:n_tv, :);
 end
 out.regression_weights = glmweights(:, 1:n_tv, :); 
 
