@@ -1,49 +1,157 @@
-function out = TDR(Xin, Yin, conds, varargin)
+function out = TDR(Xin, Yin, varargin)
 % Input:
 %   Xin: regressors encoding task variables(t.v.). 
-%        Size of #trial X #t.v.
+%        Size of #t.v. X #trial
 %        (e.g., 1 task variable (e.g., amount of reward) can be encoded as
-%         series of ones and zeros. 1 for high reward and 0 for low reward.)
-%        NOTES. scale of each task variable should be (ideally) same to avoid some
-%        variable specific "leaning" of regression coefficients.
-%   Yin: neural firing rates. 
-%        Size of #time X  #trial or #neuron X #time X #trial
+%         series of ones and minus ones. 1 for high reward and -1 for low reward.)
+%        NOTES1. scale of each task variable should be (ideally) same, to avoid
+%        variable specific over(or under)estimation of regression coefficient.
+%        NOTES2. This matrix also determines number of condition.
+%                If transpose of the matrix has the following values,
+%                   [1 0;
+%                    0 1;
+%                    0 0;
+%                    1 0;
+%                    0 1;
+%                    0 0];
+%                It is regarded as 6 trials with 3 conditions and 2 task
+%                variables.
+%   Yin: neural firing rates. (0s and 1s.)
+%        Size of #time X #trial or #time X #trial X #neuron
 %   varargin:
-%       'normY' or 'normy' : zscoring of each neuron. (defaults: off)
-%                            (mean and std are computed after combining
-%                             time and trials.)
-%       'add_Intcpt'       : no use of intercept in the GLM process. (defaults: on)
-%       'add_Interact'     : add interaction term.
+%       ('norm_y', boolean) : zscoring of each neuron. (defaults: true)
+%                  (mean and std are computed after combining
+%                   time and trials.)
+%       ('intcpt', boolean)    : Whether to add intercept in the GLM process. (defaults: true)
+%       ('interact', boolean)  : Whether to add interaction term. (defaults: false)
+%                                This will add interaction term of t.v.s.
+%       ('binsize', integer)   : Definition of bin size. 
+%                                If not specified, it won't do any binning.
+%       ('smoothsize', integer): Definition of smoothing window. (defaults: 30)
+%       ('numcomp', integer)  : Definition of number of PCs. 
+%                               (defaults: 90% explaining PCs).
+%
+% Output:
+%   out.regression_weights : #neuron X #t.v. X #time
+%                            (encoding weights in time.)
+%   out.beta_v_orth : #neuron X #t.v.
+%                    (t.v. specific axis)
+%   out.p_vc: #time X #conds X #t.v.  
+%             (average population rates projected. 
+%   #time can differ in "Ouput" variable from "Input" variable
+%   if "binsize" has specified.
+%   
+%   2022.03.06. Jungwoo.
 
-do_zscr = false;
-add_Intcpt = true; 
-add_Interact = off;
+norm_y = true;
+add_intcpt = true; 
+add_interact = false;
+smthwindow = 30;
 
 for i = 1:numel(varargin)
     if ischar(varargin{i})
         switch varargin{i}
-            case 'normY' | 'normy'
+            case 'norm_y' | 'normy'
                 % zscoring neural firing rates.
-                do_zscr = true;
-            case 'noIntcpt'
-                add_Intcpt = false;
+                norm_y = varargin{i+1};
+            case 'intcpt'
+                add_intcpt = varargin{i+1};
+            case 'interact'
+                add_interact = varargin{i+1};
+            case 'binsize'
+                binsize = varargin{i+1};
+            case 'smoothsize'
+                smthwindow = varargin{i+1};
+            case 'numcomp'
+                numcomp = varargin{i+1};
         end
+   end
+end
+
+origY = Yin;
+origX = Xin;
+[n_time, n_trial, n_neuron] = size(origY);
+[n_trial2, n_tv] = size(origX);
+if n_trial2 ~= n_trial
+    error('Number of trials in X and Y are not equal.')
+end
+
+% Specifying Y.
+Y = reshape(Yin, [], n_neuron);
+if exist('binsize', 'var')
+    if mod(n_time, binsize) == 0
+        Y = bin_raster(Y', binsize)';
+    else
+        error('Choose appropriate binsize!')
     end
 end
-
-
-if numel(size(Yin)) == 3
-    
-elseif numel(size(Yin)) == 2
-    
-else
-    error('Inadequate size of neural firing rates!');
+if norm_y
+    Y = zscore(Y);
+    Y = reshape(Y, [], n_trial, n_neuron);
 end
 
+% Specifying X.
+if add_interact
+    inter_var = nchoosek(1:n_tv, 2);
+    inter_tvs = NaN(size(Xin, 1), size(inter_var, 1)); % prealloc.
+    for ii = 1:size(inter_var, 1)
+        inter_tvs(:, ii) = Xin(:, inter_var(ii, 1)) .* Xin(:, inter_var(ii, 2));
+    end
+    Xin = [Xin inter_tvs];
+end
+if add_intcpt
+    Xin = [Xin ones(size(Xin, 1), 1)];
+end
+X = Xin;
+
+%% Regress Y with respect to X.    
+glmweights = NaN(n_neuron, n_tv, size(Y, 1)); % prealloc. 
+for ni = 1:n_neuron
+    trXti = Y(:, :, ni)';
+    glmweights(ni, :, :) = pinv(X) * trXti;
+end
+out.regression_weights = glmweights(:, 1:n_tv, :); 
 
 
+%% PCA (6.4 - 6.7)
+[~, ~, condIDs] = unique(origX, 'rows');
+n_cond = numel(unique(condIDs));
 
+Yconds = [];
+for ci = 1:n_cond
+    Yavgsmth = smoothdata(squeeze(mean(Y(:, condIDs == ci, :), 2)), 1, 'gaussian', smthwindow);
+    Yconds = cat(1, Yconds, Yavgsmth);
+end
 
+[PCcoeff, ~, ~, ~, expls] = pca(Yconds);
+if ~exist('numcomp', 'var')
+    numcomp = find(cumsum(expls) >=90, 1);
+end
 
+PCcoeff = PCcoeff(:, 1:numcomp);
+D = PCcoeff * PCcoeff';
+
+B_max = NaN(n_neuron, n_tv);
+for si = 1:n_tv
+    beta_vt = squeeze(glmweights(:, si, :));
+    beta_vt_PC = D*beta_vt;
+    [~, maxidx] = max(sum(beta_vt_PC .^ 2, 1));
+    B_max(:, si) = beta_vt_PC(:, maxidx).^2;
+end
+
+[Q, ~] = qr(B_max);
+%  Q is calculated based on first column of B_max.
+%  corr(Q(:, 1), B_max(:, 1)) results in  '-1 '
+beta_v_orth = Q(:, 1:n_tv);
+% beta_v_orth determines t.v. specific axis.
+p_vc = Yconds * beta_v_orth;
+p_vc = reshape(p_vc, size(Y, 1), [], n_tv);
+% p_vc now has size of #time X #conds X #t.v. 
+% p_vc(:, :, 1) which has size of #time X #conds indicates
+% average firing rates projected on to axis which contains 
+% variable specifi information.
+
+out.beta_v_orth = beta_v_orth;
+out.p_vc = p_vc;
 
 end

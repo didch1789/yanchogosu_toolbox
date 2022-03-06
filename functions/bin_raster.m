@@ -1,4 +1,4 @@
-function binned = bin_raster_ycgosu(rasterdat, binsize)
+function binned = bin_raster(rasterdat, binsize)
 % Inputs
 %   rasterdat : raw spike data in 1ms. (neurons X timeseries)
 %   binsize   : time bin size in ms (e.g. 10) 
@@ -30,7 +30,5 @@ for bb = 1:Q
     
     binned(:, bb) = sum(rasterdat(:, l:l+k-1), 2);
     l = l + k;
-
-end
 
 end
