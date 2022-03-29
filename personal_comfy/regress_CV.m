@@ -30,6 +30,10 @@ if any(all(X == 1))
     p = p - 1;
 end
 out.beta = pinv(X) * y;
+yfit_all = X*pinv(X)*y;
+out.rsq = (1 - sum((y-yfit_all).^2) ./ sum((y-mean(y)).^2));
+out.corr = corr(y, yfit_all);
+
 
 yfit = NaN(size(y));
 for cv = 1:CVS.NumTestSets
@@ -40,9 +44,9 @@ for cv = 1:CVS.NumTestSets
     yfit(test(CVS, cv), :) = teX * trBeta;
 end
 
-out.rsq = (1 - sqrt(sum((y-yfit).^2)) ./ sqrt(sum((y-mean(y)).^2)));
-out.arsq = 1 - ((1 - out.rsq) * (N - 1) / (N - p - 1));
-out.corr = corr(y, yfit);
+out.rsq_cv =  1 - (sum((y-yfit).^2) ./ sum((y-mean(y)).^2));
+out.arsq_cv = 1 - ((1 - out.rsq_cv) * (N - 1) / (N - p - 1));
+out.corr_cv = corr(y, yfit);
 
 
 

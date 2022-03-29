@@ -13,6 +13,7 @@ function binned = bin_raster_ycgosu(rasterdat, binsize)
 %   size(rasterdat) = 100 205 (100 neurons' 200 ms data)
 %   binsize = 10
 %   size(binned)    = 100 20 (first 5 bin will contain 11 binsize)
+
 neuronnum   = size(rasterdat, 1); 
 timesize    = size(rasterdat, 2);
 Q           = fix(timesize / binsize);
