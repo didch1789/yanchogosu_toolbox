@@ -1,7 +1,7 @@
 classdef spk_data
     properties
         spikes;
-        pseudopops;
+        pseudopops = struct;
         dims = 'trial X neuron X time'
         history = {'Processed History:'};
     end
@@ -32,7 +32,7 @@ classdef spk_data
                     end
                 end
             else
-                error('Rather use bin_raster_ycgosu.m');
+                binned = bin_raster_ycgosu(rasterdat, binsize);
             end
             obj.spikes = binned;
             obj.history{end+1} = sprintf('binned with size %02d', binsize);
@@ -44,14 +44,25 @@ classdef spk_data
         end
 
         function obj = condition_avg(obj, condIds, varargin)
+            for i = 1:numel(varargin)
+                if ischar(varargin{i})
+                    switch varargin{i}
+                        case 'condnames'
+                            obj.pseudopops.condnames = varargin{i+1};
+                    end
+                end
+            end
+            
             n_trial = size(obj.spikes, 1);
             if n_trial ~= numel(condIds)
                 error('Check number of trials')
             end
             
-            n_cond = unique(numel(condIds));
+            n_cond = numel(unique(condIds));
+            
             for i = 1:n_cond
-                obj.pseudopops{i} = squeeze(mean(obj.spikes((condIds == i), :, :), 1));
+                obj.pseudopops.condavg{i} = squeeze(mean(obj.spikes((condIds == i), :, :), 1));
+                obj.pseudopops.trialnum(i) = sum(condIds == i);
             end
             obj.history{end+1} = ...
                 sprintf('condition averaged. Number of condition : %d', n_cond);
