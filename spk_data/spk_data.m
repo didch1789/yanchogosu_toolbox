@@ -8,6 +8,37 @@ classdef spk_data
     
     methods
         
+        function obj = spk_more_than(obj, spkthr, spkinterval)
+            % spkthr      : unit is spk/sec.
+            % spkinterval : unit is ms.
+            if isempty(spkinterval), spkinterval = 1; end
+            str 
+            rasterdats =  obj.spikes;
+            for i = 1:numel(rasterdats)
+                rasterdat = rasterdats{i};
+                if numel(size(rasterdat)) > 2
+                    avgraster = mean(rasterdat, [1, 3]);
+                    time_range = size(rasterdat, 3);
+                else
+                    avgraster = mean(rasterdat, [1, 2]);
+                    time_range = size(rasterdat, 2);
+                end
+                spk_per_sec = avgraster ./ (time_range/spkinterval) * 1000;
+                neuron_idx = spk_per_sec > spkthr;
+                if numel(size(rasterdat)) > 2
+                    obj.spikes{i} = rasterdat(:, neuron_idx, :);
+                else
+                    if neuron_idx == true
+                        obj.spikes{i} = rasterdat;
+                    else
+                        obj.spikes{i} = NaN;
+                    end 
+                end
+            end
+            obj.history{end+1} = sprintf('only spikes more than %d per/sec', spkthr);
+        end
+       
+        
         function obj = time_range(obj, t_range)
             rasterdats =  obj.spikes;
             for i = 1:numel(rasterdats)
@@ -35,7 +66,7 @@ classdef spk_data
                     binned   = NaN(n_trial, n_neuron, Q);
 
                     for tt = 1:n_trial
-                        spktrials   = squeeze(rasterdat(tt, :, :));
+                        spktrials   = rasterdat(tt, :, :);
                         l = 1;
                         for bb = 1:Q
                             if R ~= 0
@@ -44,7 +75,7 @@ classdef spk_data
                             else
                                 k = binsize;
                             end
-                            binned(tt, :, bb) = sum(spktrials(:, l:l+k-1), 2);
+                            binned(tt, :, bb) = squeeze(sum(spktrials(:, :, l:l+k-1), 3));
                             l = l + k;
                         end
                     end
@@ -87,8 +118,9 @@ classdef spk_data
                 n_cond = numel(unique(d_cond));
                 
                 for cidx = 1:n_cond
-                    obj.pseudopops.condavg{sidx, cidx} = squeeze(mean(d_spk(d_cond == cidx, :, :), 1));
-                    obj.pseudopops.trialnum(sidx, cidx)= sum(d_cond == cidx);
+                    c_spk = mean(d_spk(d_cond == cidx, :, :), 1);
+                    obj.pseudopops.condavg{cidx, sidx} = permute(c_spk, [2 3 1]);
+                    obj.pseudopops.trialnum(cidx, sidx)= sum(d_cond == cidx);
                 end
 
             end

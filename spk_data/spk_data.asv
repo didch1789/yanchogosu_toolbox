@@ -7,6 +7,53 @@ classdef spk_data
     end
     
     methods
+        
+        function obj = spk_more_than(obj, spkthr, spkinterval)
+            % spkthr      : unit is spk/sec.
+            % spkinterval : unit is ms.
+            if isempty(spkinterval), spkinterval = 1; end
+            str 
+            rasterdats =  obj.spikes;
+            for i = 1:numel(rasterdats)
+                rasterdat = rasterdats{i};
+                if numel(size(rasterdat)) > 2
+                    avgraster = mean(rasterdat, [1, 3]);
+                    time_range = size(rasterdat, 3);
+                else
+                    avgraster = mean(rasterdat, [1, 2]);
+                    time_range = size(rasterdat, 2);
+                end
+                spk_per_sec = avgraster ./ (time_range/spkinterval) * 1000;
+                neuron_idx = spk_per_sec > spkthr;
+                if numel(size(rasterdat)) > 2
+                    obj.spikes{i} = rasterdat(:, neuron_idx, :);
+                else
+                    if neuron_idx == true
+                        obj.spikes{i} = rasterdat;
+                    else
+                        obj.spikes{i} = NaN;
+                    end 
+                end
+                
+            end
+            
+        end
+       
+        
+        function obj = time_range(obj, t_range)
+            rasterdats =  obj.spikes;
+            for i = 1:numel(rasterdats)
+                rasterdat = rasterdats{i};
+                if numel(size(rasterdat)) > 2 
+                    obj.spikes{i} = rasterdat(:, :, t_range);
+                else
+                    obj.spikes{i} = rasterdat(:, t_range);
+                end
+            end
+            obj.history{end+1} = sprintf('int_time:%d-%d', t_range(1), t_range(end));
+        end
+        
+        
         function obj = binning(obj, binsize)
             rasterdats = obj.spikes;
             for i = 1:numel(rasterdats)
@@ -37,8 +84,8 @@ classdef spk_data
                     binned = bin_raster_ycgosu(rasterdat, binsize);
                 end
                 obj.spikes{i} = binned;
-                obj.history{end+1} = sprintf('binned with size %02d', binsize);
             end
+            obj.history{end+1} = sprintf('binned with size %02d', binsize);
         end
 
         function obj = smoothing(obj, windowsize)
@@ -82,12 +129,6 @@ classdef spk_data
                 sprintf('condition averaged. Number of condition : %d', n_cond);
         end
         
-        function obj = time_range(obj, t_range)
-            
-            
-        end
-            
         
-        end
     end
 end
