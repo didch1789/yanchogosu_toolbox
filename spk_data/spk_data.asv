@@ -7,21 +7,6 @@ classdef spk_data
     end
     
     methods
-        
-        function obj = time_range(obj, t_range)
-            rasterdats =  obj.spikes;
-            for i = 1:numel(rasterdats)
-                rasterdat = rasterdats{i};
-                if numel(size(rasterdat)) > 2 
-                    obj.spikes{i} = rasterdat(:, :, t_range);
-                else
-                    obj.spikes{i} = rasterdat(:, t_range);
-                end
-            end
-            obj.history{end+1} = sprintf('int_time:%d-%d', t_range(1), t_range(end));
-        end
-        
-        
         function obj = binning(obj, binsize)
             rasterdats = obj.spikes;
             for i = 1:numel(rasterdats)
@@ -52,8 +37,8 @@ classdef spk_data
                     binned = bin_raster_ycgosu(rasterdat, binsize);
                 end
                 obj.spikes{i} = binned;
+                obj.history{end+1} = sprintf('binned with size %02d', binsize);
             end
-            obj.history{end+1} = sprintf('binned with size %02d', binsize);
         end
 
         function obj = smoothing(obj, windowsize)
@@ -97,6 +82,12 @@ classdef spk_data
                 sprintf('condition averaged. Number of condition : %d', n_cond);
         end
         
+        function obj = time_range(obj, t_range)
+            
+            
+        end
+            
         
+        end
     end
 end
