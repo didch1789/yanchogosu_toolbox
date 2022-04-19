@@ -113,6 +113,7 @@ classdef spk_data
             obj.history{end+1} = sprintf('smoothed with size %d', windowsize);
         end
         
+        
 
         function obj = condition_avg(obj, condIds, varargin)
             % "condIds" should be cell.

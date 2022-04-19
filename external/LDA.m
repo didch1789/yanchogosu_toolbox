@@ -27,9 +27,9 @@
 %
 %
 % Last modified: Dec-11-2010
-function W = LDA(Input,Target,Priors)
+function [W, Prj] = LDA(Input,Target,Priors)
 % Determine size of input data
-[n m] = size(Input);
+[n, m] = size(Input);
 % Discover and count unique class labels
 ClassLabel = unique(Target);
 k = length(ClassLabel);
@@ -38,9 +38,9 @@ nGroup     = NaN(k,1);     % Group counts
 GroupMean  = NaN(k,m);     % Group sample means
 PooledCov  = zeros(m,m);   % Pooled covariance
 W          = NaN(k,m+1);   % model coefficients
-if  (nargin >= 3)  PriorProb = Priors;  end
+if  (nargin >= 3),  PriorProb = Priors;  end
 % Loop over classes to perform intermediate calculations
-for i = 1:k,
+for i = 1:k
     % Establish location and size of each class
     Group      = (Target == ClassLabel(i));
     nGroup(i)  = sum(double(Group));
@@ -73,5 +73,7 @@ for i = 1:k
 end
 % Housekeeping
 clear Temp
+
+Prj = [ones(n, 1) Input] * W';
 end
 % EOF
