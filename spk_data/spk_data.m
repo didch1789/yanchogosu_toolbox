@@ -45,10 +45,33 @@ classdef spk_data
             obj.history{end+1} = sprintf('only spikes more than %d per/sec', spkthr);
         end
         
-        function obj = zscore_spk(obj, dim)
+        function obj = normalize_spk(obj, varargin)
+            do_trial = true;
+            norm_str = 'trial';
+            for i = 1:numel(varargin)
+                if ischar(varargin{i})
+                    switch varargin{i}
+                        case 'session_lvl'
+                            do_sess  = true;
+                            do_trial = false; 
+                            norm_str = 'session';
+                        case 'trial_lvl'
+                            do_sess  = false;
+                            do_trial = true;
+                            norm_str = 'trial';
+                    end
+                end
+            end
             rasterdats =  obj.spikes;
-            obj.spikes = cellfun(@(x) zscore(x, 0, dim), rasterdats, 'UniformOutput', false);
-            obj.history{end+1} = sprintf('zscored in %d dim', dim);
+            if do_sess
+                mean_sess = cellfun(@(x) mean(x, 'all'), rasterdats, 'UniformOutput', false);
+                std_sess  = cellfun(@(x) std(x, 0, 'all'), rasterdats, 'UniformOutput', false);
+                obj.spikes = cellfun(@(x, y, z) (x-y)/z, rasterdats, mean_sess, std_sess, 'UniformOutput', false);
+            elseif do_trial
+                obj.spikes = cellfun(@(x) zscore(x, 0, dim), rasterdats, 'UniformOutput', false);
+            end
+            
+            obj.history{end+1} = sprintf('normalized at %s lvl', norm_str);
         end
        
         
