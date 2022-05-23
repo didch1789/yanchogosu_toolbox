@@ -68,7 +68,7 @@ classdef spk_data
                 std_sess  = cellfun(@(x) std(x, 0, 'all'), rasterdats, 'UniformOutput', false);
                 obj.spikes = cellfun(@(x, y, z) (x-y)/z, rasterdats, mean_sess, std_sess, 'UniformOutput', false);
             elseif do_trial
-                obj.spikes = cellfun(@(x) zscore(x, 0, dim), rasterdats, 'UniformOutput', false);
+                obj.spikes = cellfun(@(x) zscore(x, 0, 3), rasterdats, 'UniformOutput', false);
             end
             
             obj.history{end+1} = sprintf('normalized at %s lvl', norm_str);
@@ -89,8 +89,23 @@ classdef spk_data
         end
         
         
-        function obj = binning(obj, binsize)
+        function obj = binning(obj, binsize, varargin)
             rasterdats = obj.spikes;
+            for i = 1:numel(varargin)
+                if ischar(varargin{i})
+                    switch varargin{i}
+                        case 'condavg'
+                            rasterdats = obj.pseudopops.condavg;
+                            obj.pseudopops.condavg = ...
+                                cellfun(@(x) bin_raster_ycgosu(x, binsize), ...
+                                rasterdats, 'UniformOutput', false);
+                            obj.history{end+1} = ...
+                                sprintf('binned on condavg with size %02d', binsize);
+                            return;
+                    end
+                end
+            end
+            
             for i = 1:numel(rasterdats)
                 rasterdat = rasterdats{i};
                 if numel(size(rasterdat)) > 2 
@@ -123,8 +138,22 @@ classdef spk_data
             obj.history{end+1} = sprintf('binned with size %02d', binsize);
         end
 
-        function obj = smoothing(obj, windowsize)
-            rasterdats = obj.spikes;
+        function obj = smoothing(obj, windowsize, varargin)
+             rasterdats = obj.spikes;
+            for i = 1:numel(varargin)
+                if ischar(varargin{i})
+                    switch varargin{i}
+                        case 'condavg'
+                            rasterdats = obj.pseudopops.condavg;
+                            obj.pseudopops.condavg = ...
+                                cellfun(@(x) smoothdata(x, 2, 'gaussian', windowsize), ...
+                                rasterdats, 'UniformOutput', false);
+                            obj.history{end+1} = ...
+                                sprintf('smoothed on condavg with size %d', windowsize);
+                            return;
+                    end
+                end
+            end
             for i = 1:numel(rasterdats)
                 rasterdat = rasterdats{i};
                 if numel(size(rasterdat)) > 2
@@ -176,6 +205,14 @@ classdef spk_data
             
             obj.history{end+1} = ...
                 sprintf('condition averaged. Number of condition : %d', n_cond);
+        end
+        
+        function out = return_condition_avg(obj)
+            % would work after spk_data.condition_avg 
+            n_cond = size(obj.pseudopops.condavg, 1);
+            condavg_mat = cell2mat(obj.pseudopops.condavg')';
+            n_time = size(condavg_mat, 1)/n_cond;
+            out = mat2cell(condavg_mat, repmat(n_time, n_cond, 1), size(condavg_mat, 2));
         end
         
         
