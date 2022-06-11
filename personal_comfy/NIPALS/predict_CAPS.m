@@ -894,7 +894,7 @@ stats = struct('Y', obj.Y, 'algorithm_name', algorithm_name, ...
 stats.teIdx = teIdx;
 stats.trIdx = trIdx;
 
-stats.other_output = []; %optout;
+stats.other_output = optout;
 stats.other_output_descrip = 'Other output from algorithm - trained on all data (these depend on algorithm)';
 if cv_save
     stats.other_output_cv = cv_optout;
@@ -1322,7 +1322,7 @@ end
 % 3/14/13: tor changed because full rank was still returning unstable
 % matrices (non-invertible) sometimes.
 numcomps = rank(sc);
-numcomps = rank(sc, .001);
+numcomps = rank(sc, .0001);
 %numcomps = rank(sc, mean(abs(sc(:))) ./ 10000);
 
 %X = [ones(size(sc, 1), 1) sc(:, 1:numcomps)];

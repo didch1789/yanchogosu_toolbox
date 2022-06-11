@@ -1,5 +1,5 @@
 function out = perm_corr(x,y)
-
+rng('default');
 for i = 1:10000
  idx_x = randperm(numel(x));
  idx_y = randperm(numel(x));
