@@ -46,34 +46,34 @@ classdef spk_data
         end
         
         function obj = normalize_spk(obj, varargin)
+            rasterdats =  obj.spikes;
             for i = 1:numel(varargin)
                 if ischar(varargin{i})
                     switch varargin{i}
                         case 'session_lvl'
-                            do_sess  = true;    
                             norm_str = 'session';
                         case 'neuron_lvl'
-                            do_neur  =  true;
                             norm_str = 'neuron';
                     end
                 end
             end
-            rasterdats =  obj.spikes;
-            if do_sess
-                mean_sess = cellfun(@(x) mean(x, 'all'), rasterdats, 'UniformOutput', false);
-                std_sess  = cellfun(@(x) std(x, 0, 'all'), rasterdats, 'UniformOutput', false);
-                obj.spikes = cellfun(@(x, y, z) (x-y)/z, rasterdats, mean_sess, std_sess, 'UniformOutput', false);
-            elseif do_neur
-                for iS = 1:numel(rasterdats)
-                    [n_trial, n_neur, n_time] = size(rasterdats{iS});
-                    singlesess       = permute(rasterdats{iS}, [2 3 1]);
-                    singlesess_flat  = reshape(singlesess, n_neur, []);
-                    singlesess_flat0 = zscore(singlesess_flat, 0, 2);
-                    singlesess_0     = reshape(singlesess_flat0, n_neur, n_time, n_trial); 
-                    rasterdats{iS}   = permute(singlesess_0, [3 1 2]);
-                end
-                obj.spikes = rasterdats;
+            
+            switch norm_str
+                case {'session'}
+                    mean_sess = cellfun(@(x) mean(x, 'all'), rasterdats, 'UniformOutput', false);
+                    std_sess  = cellfun(@(x) std(x, 0, 'all'), rasterdats, 'UniformOutput', false);
+                    obj.spikes = cellfun(@(x, y, z) (x-y)/z, rasterdats, mean_sess, std_sess, 'UniformOutput', false);
+                case {'neuron'}
+                    for iS = 1:numel(rasterdats)
+                        [n_trial, n_neur, n_time] = size(rasterdats{iS});
+                        singlesess       = permute(rasterdats{iS}, [2 3 1]);
+                        singlesess_flat  = reshape(singlesess, n_neur, []);
+                        singlesess_flat0 = zscore(singlesess_flat, 0, 2);
+                        singlesess_0     = reshape(singlesess_flat0, n_neur, n_time, n_trial); 
+                        rasterdats{iS}   = permute(singlesess_0, [3 1 2]);
+                    end
             end
+            obj.spikes = rasterdats;
             obj.history{end+1} = sprintf('normalized at %s lvl', norm_str);
         end
        
