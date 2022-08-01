@@ -51,8 +51,7 @@ if doline
    line([lineidx lineidx], [0 trials], 'Color', linecolor)
 end
 
-hold off;
-
+hold off;box off;
 f = gcf;
 
 end

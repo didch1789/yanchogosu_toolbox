@@ -191,9 +191,10 @@ classdef spk_data
                 
                 d_cond = d_cond(saveidx);       d_spk  = d_spk(saveidx, :, :);
                 n_cond = numel(unique(d_cond));
+                conds_are = unique(d_cond);
                 
-                for cidx = 1:n_cond
-                    int_idx = find(d_cond == cidx);
+                for cidx = 1:numel(conds_are)
+                    int_idx = find(d_cond == conds_are(cidx));
                     if exist('n_sample', 'var')
                         sample_idx = datasample(int_idx, n_sample, 'Replace', false);
                     else
@@ -201,7 +202,7 @@ classdef spk_data
                     end
                     c_spk = mean(d_spk(sample_idx, :, :), 1);
                     obj.pseudopops.condavg{cidx, sidx} = permute(c_spk, [2 3 1]);
-                    obj.pseudopops.trialnum(cidx, sidx)= sum(d_cond == cidx);
+                    obj.pseudopops.trialnum(cidx, sidx)= sum(d_cond == conds_are(cidx));
                 end
 
             end
