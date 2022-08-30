@@ -78,34 +78,23 @@ classdef spk_data
         end
        
         
-        function obj = time_range(obj, t_range, varargin)
-            for iV = 1:numel(varargin)
-                if ischar(varargin{iV})
-                    switch varargin{iV}
-                        case 'time_flag'
-                            timemat = varargin{iV+1};
-                    end
-                end
-            end
-            
+        function obj = time_range(obj, t_range)
             rasterdats =  obj.spikes;
             for i = 1:numel(rasterdats)
-                rasterdat     = rasterdats{i};
-                int_time      = t_range{i};
-                rasterdat_mat = NaN([size(rasterdat, [1 2]), size(int_time, 2)]); 
+                rasterdat = rasterdats{i};
+                int_time  = t_range{i};
                 if numel(size(rasterdat)) > 2 
                     for trId = 1:size(int_time, 1)
-                        rasterdat_mat(trId, :, :) = rasterdat(trId, :, int_time(trId, :));
+                        obj.spikes{i}(trId, :, ) = rasterdat(:, :, int_time(trial_idx, :));
                     end
                     
                 else
                     for trId = 1:size(t_range, 1)
-                        rasterdat_mat(trId, :) = rasterdat(trId, int_time(trId, :));
+                        obj.spikes{i}(:, trId) = rasterdat(:, t_range);
                     end
                 end
-                obj.spikes{i} = rasterdat_mat;
             end
-            obj.history{end+1} = sprintf('int_time:%d-%d', timemat(1), timemat(end));
+            obj.history{end+1} = sprintf('int_time:%d-%d', t_range(1), t_range(end));
         end
         
         
