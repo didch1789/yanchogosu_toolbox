@@ -11,12 +11,15 @@ function f = plot_raster_ycgosu(spikedat, varargin)
 doline = false;
 rastercolor = 'black';
 linecolor = 'red';
+rasterwidth = 1;
 
 for args = 1:numel(varargin)
     if isa(varargin{args}, 'char') || isa(varargin{args}, 'string')
         switch varargin{args}
             case 'RasterColor'
                 rastercolor = varargin{args+1};
+            case 'RasterWidth'
+                rasterwidth = varargin{args+1};
             case 'AddLine'
                 doline = true;
                 lineidx = varargin{args+1};
@@ -43,7 +46,7 @@ for i = 1:trials
     yspks(1, :) = i - 1;
     yspks(2, :) = i;
     
-    plot(xspks, yspks, 'Color', rastercolor);hold on
+    plot(xspks, yspks, 'Color', rastercolor, 'LineWidth', rasterwidth);hold on
 end
 set(gca, 'XLim', [0, triallength], 'Ylim', [0, trials], 'TickDir', 'out', 'TickLength', [.005 .005])
 
