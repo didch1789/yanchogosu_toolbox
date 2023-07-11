@@ -118,7 +118,7 @@ for i = 1:n_sess
         if mod(n_time, binsize) == 0
             Y = bin_raster(Y', binsize)';
         else
-            error('Choose appropriate binsize!')
+            warning('Choose appropriate binsize!')
         end
     end
     Yout.Bin = reshape(Y, [], n_trial, n_neuron);

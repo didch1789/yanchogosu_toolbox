@@ -1,3 +1,19 @@
+% Basic motivation of the class is to calculate basic process 
+% of neural spike trains (which are 0 and 1s)
+% Feautures include
+%   1. Thresholding based on firing rate
+%   2. Normalization of activity
+%   3. Specifying time range
+%   4. Calculating PSTHs 
+%   5. Temproal smoothing
+%   6. Binning 
+%   7. Condition-wise averaging.
+%
+%
+% ============= FIXATION NOTES ============
+% 22.12.22 Jungwoo: This is a prototype. Lots of functions need to be
+%                   verified for usage 
+
 classdef spk_data
     properties
         spikes = {};
