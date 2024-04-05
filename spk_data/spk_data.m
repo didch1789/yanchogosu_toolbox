@@ -93,14 +93,12 @@ classdef spk_data
                 rasterdat     = rasterdats{i};
                 int_time      = t_range{i};
                 rasterdat_mat = NaN([size(rasterdat, [1 2]), size(int_time, 2)]); 
-                if numel(size(rasterdat)) > 2 
+                if size(int_time, 1) == 1
+                    rasterdat_mat = rasterdat(:, :, int_time);
+                else 
                     for trId = 1:size(int_time, 1)
-                        rasterdat_mat(trId, :, :) = rasterdat(trId, :, int_time(trId, :));
-                    end
-                    
-                else
-                    for trId = 1:size(t_range, 1)
-                        rasterdat_mat(trId, :) = rasterdat(trId, int_time(trId, :));
+                        rasterdat_mat(trId, :, :) = ...
+                            rasterdat(trId, :, int_time(trId, :));
                     end
                 end
                 obj.spikes{i} = rasterdat_mat;
