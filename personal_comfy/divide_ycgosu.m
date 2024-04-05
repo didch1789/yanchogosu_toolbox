@@ -11,6 +11,7 @@ if numel(total_length) ~= 1
     total_length = max(total_length);
 end
 
+
 divided = cell(numcell, 1);
 Q = fix(total_length/numcell);
 R = rem(total_length,numcell);
@@ -23,7 +24,8 @@ for i = 1:numel(divided)
     else
         divided{i} = (Q*(i-1)+k+1:Q*(i)+k);
     end
-end
+end  
+    
 
 
 end
