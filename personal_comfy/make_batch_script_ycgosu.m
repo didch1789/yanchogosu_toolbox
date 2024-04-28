@@ -14,7 +14,7 @@ clearvars s
 s = '';
 for i=batchidx
  x = ['nohup matlab -singleCompThread -batch "cd(', funcdir, ');', funcname, '(', num2str(i),  ')"'];
- y = [' -logfile ', fullfile(logdir, sprintf('log%02d.txt', i)), '&', ' '];
+ y = [' -logfile ', fullfile(logdir, sprintf('log%02d-%s.txt', i, randseq_generator(5))), '&', ' '];
  s = [s, x, y];
 end
 
