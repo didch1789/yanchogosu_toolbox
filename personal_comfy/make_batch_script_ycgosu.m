@@ -12,9 +12,10 @@ end
 
 clearvars s
 s = '';
+randstr = randseq_generator(5);
 for i=batchidx
  x = ['nohup matlab -singleCompThread -batch "cd(', funcdir, ');', funcname, '(', num2str(i),  ')"'];
- y = [' -logfile ', fullfile(logdir, sprintf('log%02d-%s.txt', i, randseq_generator(5))), '&', ' '];
+ y = [' -logfile ', fullfile(logdir, sprintf('log%02d-%s.txt', i, randstr)), '&', ' '];
  s = [s, x, y];
 end
 
