@@ -1,0 +1,13 @@
+function mkdir_BIDS_format
+% Run this function in "~/data/$prjname"
+basedir = pwd;
+
+
+mkdir(fullfile(basedir, 'audiovideo'))
+mkdir(fullfile(basedir, 'behavioral'))
+mkdir(fullfile(basedir, 'documents'))
+mkdir(fullfile(basedir, 'imagin'))
+mkdir(fullfile(basedir, 'imaging'))
+
+
+end
