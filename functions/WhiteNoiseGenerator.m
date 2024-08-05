@@ -66,8 +66,8 @@ if doplay
     IDs       = cat(1, AudioInfo.output.ID);
     int_ID    = IDs(AudioIdx);
     
-    player    = audioplayer(increasing_volume_noise, int_freq, 8, int_ID);
-    play(player,[1 (get(player, 'SampleRate'))]);
+    player    = audioplayer(increasing_volume_noise, int_freq, 16, int_ID);
+    playblocking(player);
 end
 
 

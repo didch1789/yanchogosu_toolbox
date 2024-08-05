@@ -3,6 +3,12 @@ function [lineobj, patchobj] = plotShadedErrorbar(x, y, varargin)
 if size(x, 1) > size(x, 2), x = x';end
 if size(y, 1) > size(y, 2), y = y';end
 
+lc = 'k';
+lw = 1.2;
+sc = 'k';
+sec = 'none';
+sa = 0.5;
+
 for i = 1:numel(varargin)
     if ischar(varargin{i})
         switch varargin{i}
@@ -19,6 +25,8 @@ for i = 1:numel(varargin)
             case {'Error'}
                 err = varargin{i+1};
                 if size(err, 1) > size(err, 2), err = err';end
+            otherwise
+                error('Unknown Input')
         end
     end
 end
@@ -26,7 +34,6 @@ end
 
 lineobj = plot(x, y, 'Color', lc, 'LineWidth', lw);hold on
 patchobj = patch([x flip(x)], [y - err, flip(y+err)], sc, 'FaceAlpha',sa, 'EdgeColor', sec);
-
-
+hold off
 
 end
