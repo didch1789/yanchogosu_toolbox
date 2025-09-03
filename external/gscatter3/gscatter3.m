@@ -117,7 +117,7 @@ if length(gu)>128,
     return;
 end;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clrstr={'b','g','r','c','m','y','k'};
+clrstr={'b','g','r','c','m','y','k', [.2 .2 .5]};
 clrmaps={'jet','hsv','hot','cool','spring','summer','autumn','winter','gray','bone','copper','pink','lines'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~exist('clr','var')||isempty(clr),
