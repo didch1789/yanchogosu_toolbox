@@ -21,4 +21,14 @@ end
 
 clipboard('copy', s)
 
+function st = randseq_generator(strlen)
+
+    time_is = datetime;
+    rng(time_is.Second);
+    symbols = ['a':'z' 'A':'Z' '0':'9'];
+    nums = randi(numel(symbols),[1 strlen]);
+    st = symbols (nums);
+
+end
+
 end
