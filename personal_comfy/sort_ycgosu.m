@@ -17,6 +17,7 @@ end
 dofilesort = 1;
 dofoldersort = 0;
 dochar = 0;
+dofindhidden = 0;
 
 if ~isempty(varargin)
     for i = 1:numel(varargin)
@@ -29,6 +30,8 @@ if ~isempty(varargin)
                dofoldersort = 1;
             case {'char'}
                dochar = 1;
+            case {'find_hidden'}
+                dofindhidden = 1;
             otherwise 
                 error('Unidentified sorting criteria')
         end
@@ -59,10 +62,13 @@ for i = 1:length(listing)
     file{i, :} = filelist_temp{idx(i)};
 end 
 
-filt_idx = ~contains(fulldir, {'/.'});
-fulldir = fulldir(filt_idx, :);
-folder = folder(filt_idx, :);
-file = file(filt_idx, :);
+if ~dofindhidden
+    filt_idx = ~contains(fulldir, {'/.'});
+    fulldir = fulldir(filt_idx, :);
+    folder = folder(filt_idx, :);
+    file = file(filt_idx, :);
+end
+
 
 if dochar
     fulldir = char(fulldir);
